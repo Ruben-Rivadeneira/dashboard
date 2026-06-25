@@ -46,11 +46,12 @@ export interface UseCallCenterSocketReturn {
 }
 
 // ─── Config ────────────────────────────────────────────────────────────────────
-// URL completa — el proxy de Vite es opcional, esto funciona directo si el
-// servidor permite CORS, o a través del proxy si está configurado.
-const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ??
-  'https://cls59-dal.i6.inconcert.cloud/inconcert/api';
+// En desarrollo: usa el proxy de Vite (/inconcert/api)
+// En producción (Vercel): usa la serverless function (/api/proxy?path=)
+const IS_DEV = import.meta.env.DEV;
+const BASE_URL = IS_DEV
+  ? '/inconcert/api'
+  : (import.meta.env.VITE_API_BASE_URL ?? '/inconcert/api');
 const POLL_MS = Number(import.meta.env.VITE_POLL_INTERVAL ?? 30_000);
 const CC_USER = import.meta.env.VITE_CC_USER ?? '';
 const CC_PASSWORD = import.meta.env.VITE_CC_PASSWORD ?? '';
@@ -101,7 +102,14 @@ function elapsed(ts: string): number {
 async function apiPost<T>(path: string, body: unknown, token?: string): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  const res = await fetch(`${BASE_URL}${path}`, {
+
+  // En producción, todas las llamadas van a través de /api/proxy?path=<ruta>
+  // En desarrollo, van directo al proxy de Vite
+  const url = IS_DEV
+    ? `${BASE_URL}${path}`
+    : `/api/proxy?path=${encodeURIComponent(path)}`;
+
+  const res = await fetch(url, {
     method: 'POST',
     headers,
     body: JSON.stringify(body),
