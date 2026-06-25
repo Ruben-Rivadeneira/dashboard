@@ -365,32 +365,38 @@ function buildMetrics(liveRows: LiveRow[], archiveRows: ArchiveRow[]): Metricas 
       ? attendedInb.reduce((sum, r) => sum + toSeconds(r.WrapupTime), 0) / attendedInb.length
       : 0;
 
-  // Bug fix 1: activeOutbound incluye Taken Y N/A (llamada manual en curso)
-  const activeInbound = liveRows.filter(
-    (r) =>
-      r.account?.toLowerCase().includes('_in') &&
-      (r.InteractionStateValue === 'Taken' || r.InteractionStateValue === 'N/A'),
-  ).length;
+  // Deduplicar agentes en llamada por username para evitar contar múltiples
+  // filas del mismo agente (ocurre cuando está suscrito a varias campañas)
+  const activeInboundAgents = new Set<string>();
+  const activeOutboundAgents = new Set<string>();
 
-  const activeOutbound = liveRows.filter(
-    (r) =>
-      r.account?.toLowerCase().includes('_out') &&
-      (r.InteractionStateValue === 'Taken' || r.InteractionStateValue === 'N/A'),
-  ).length;
-
-  // Ocupación: agentes ocupados (Taken o Wrapup) / agentes únicos en live
-  const agentSetLive = new Set<string>();
   for (const r of liveRows) {
-    if (r.agent && r.agent !== 'N/A') agentSetLive.add(r.agent.split('@')[0]);
+    if (r.InteractionStateValue !== 'Taken' && r.InteractionStateValue !== 'N/A') continue;
+    const username = r.agent && r.agent !== 'N/A' ? r.agent.split('@')[0] : null;
+    if (!username) continue;
+    if (r.account?.toLowerCase().includes('_in')) {
+      activeInboundAgents.add(username);
+    } else if (r.account?.toLowerCase().includes('_out')) {
+      activeOutboundAgents.add(username);
+    }
+  }
+
+  const activeInbound = activeInboundAgents.size;
+  const activeOutbound = activeOutboundAgents.size;
+
+  // Ocupación: agentes únicos ocupados / agentes únicos en live
+  const agentSetLive = new Set<string>();
+  const busyAgentSet = new Set<string>();
+  for (const r of liveRows) {
+    if (!r.agent || r.agent === 'N/A') continue;
+    const username = r.agent.split('@')[0];
+    agentSetLive.add(username);
+    if (r.InteractionStateValue === 'Taken' || r.InteractionStateValue === 'Wrapup') {
+      busyAgentSet.add(username);
+    }
   }
   const totalAgents = agentSetLive.size || 1;
-  const busyAgents = liveRows.filter(
-    (r) =>
-      r.agent &&
-      r.agent !== 'N/A' &&
-      (r.InteractionStateValue === 'Taken' || r.InteractionStateValue === 'Wrapup'),
-  ).length;
-  const ocupacion = Math.min(busyAgents / totalAgents, 1);
+  const ocupacion = Math.min(busyAgentSet.size / totalAgents, 1);
 
   return {
     serviceLevel,
