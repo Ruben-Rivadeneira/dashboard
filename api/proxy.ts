@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-const TARGET = 'https://cls59-dal.i6.inconcert.cloud/inconcert/api';
+const TARGET = 'https://gruponuveto-aws.i6.inconcert.cloud/inconcert/api';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Solo POST
