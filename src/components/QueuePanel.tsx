@@ -102,7 +102,7 @@ export default function QueuePanel() {
   const colaOrdenada = [...queue].sort((a, b) => a.waitSeconds - b.waitSeconds);
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden h-full flex flex-col">
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
         <div>
@@ -122,7 +122,7 @@ export default function QueuePanel() {
       </div>
 
       {/* Lista de llamadas */}
-      <div className="max-h-[400px] overflow-y-auto">
+      <div className="flex-1 overflow-y-auto">
         {colaOrdenada.length === 0 ? (
           <div className="px-6 py-12 text-center">
             <Phone className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />

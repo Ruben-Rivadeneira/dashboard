@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 export interface Agente {
   id: string;
   name: string;
-  status: 'disponible' | 'on_call_inbound' | 'on_call_outbound' | 'acw' | 'break' | 'ausente';
+  status: 'disponible' | 'on_call_inbound' | 'on_call_outbound' | 'acw' | 'break' | 'ausente' | 'noacd' | 'lunch' | 'bathroom';
   secondsInStatus: number;
   callsToday: number;
   csat: number;
@@ -279,9 +279,13 @@ function buildAgentes(
     } else {
       // Sin llamada activa → usar StateRaw del endpoint logged_in
       const raw = (loggedRow.StateRaw ?? '').toUpperCase();
-      if (raw === 'BREAK') status = 'break';
-      else if (raw === 'ABSENT' || raw === 'AWAY') status = 'ausente';
-      else status = 'disponible'; // ACTIVE sin llamada = disponible
+      if      (raw === 'ACTIVE')    status = 'disponible';
+      else if (raw === 'NOACD')     status = 'noacd';
+      else if (raw === 'LUNCH')     status = 'lunch';
+      else if (raw === 'AWAY')      status = 'ausente';
+      else if (raw === 'BATHROOM')  status = 'bathroom';
+      else if (raw === 'BREAK')     status = 'break';
+      else                          status = 'disponible';
     }
 
     agentes.push({

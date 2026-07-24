@@ -4,7 +4,6 @@ import { useDashboard } from '../context/DashboardContext';
 import { formatearCronometro } from '../utils/formatTime';
 import type { Agente } from '../hooks/useCallCenterSocket';
 
-// Mapeo de estados a labels y estilos
 const estadosConfig = {
   disponible: {
     label: 'Disponible',
@@ -27,7 +26,7 @@ const estadosConfig = {
     badgeClass: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
   },
   break: {
-    label: 'Break',
+    label: 'Descanso',
     icon: Coffee,
     badgeClass: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
   },
@@ -35,6 +34,21 @@ const estadosConfig = {
     label: 'Ausente',
     icon: UserX,
     badgeClass: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400',
+  },
+  noacd: {
+    label: 'En línea no ACD',
+    icon: UserX,
+    badgeClass: 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300',
+  },
+  lunch: {
+    label: 'Almorzando',
+    icon: Coffee,
+    badgeClass: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
+  },
+  bathroom: {
+    label: 'Baño',
+    icon: Coffee,
+    badgeClass: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
   },
 };
 
@@ -208,7 +222,7 @@ export default function AgentsTable() {
   const { agents } = useDashboard();
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden h-full flex flex-col">
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Equipo de Agentes</h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -216,7 +230,7 @@ export default function AgentsTable() {
         </p>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="flex-1 overflow-auto">
         <table className="w-full">
           <thead className="bg-gray-50 dark:bg-gray-800/50">
             <tr>

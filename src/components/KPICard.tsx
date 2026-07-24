@@ -54,11 +54,11 @@ export default function KPICard({
 
   return (
     <div
-      className={`${colores.bg} ${colores.border} border rounded-2xl p-5 transition-all duration-300 hover:shadow-lg`}
+      className={`${colores.bg} ${colores.border} border rounded-xl p-3 transition-all duration-300 hover:shadow-lg`}
     >
       <div className="flex items-start justify-between">
         {/* Icono */}
-        <div className={`${colores.icon} w-12 h-12 rounded-xl flex items-center justify-center`}>
+        <div className={`${colores.icon} w-9 h-9 rounded-lg flex items-center justify-center`}>
           {icono}
         </div>
 
@@ -79,12 +79,12 @@ export default function KPICard({
       </div>
 
       {/* Valor principal */}
-      <div className="mt-4">
-        <span className={`text-3xl font-bold font-mono ${colores.value}`}>{valor}</span>
+      <div className="mt-1">
+        <span className={`text-2xl font-bold font-mono ${colores.value}`}>{valor}</span>
       </div>
 
       {/* Título y subtítulo */}
-      <div className="mt-2">
+      <div className="mt-1">
         <h3 className={`text-sm font-medium ${colores.text}`}>{titulo}</h3>
         {subtitulo && <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{subtitulo}</p>}
       </div>
