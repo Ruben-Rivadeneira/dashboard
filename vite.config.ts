@@ -10,7 +10,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/inconcert': {
-        target: 'https://gruponuveto-aws.i6.inconcert.cloud',
+        target: 'https://cls59-dal.i6.inconcert.cloud',
         changeOrigin: true,
         secure: true,
       },
