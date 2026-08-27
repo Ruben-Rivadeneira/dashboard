@@ -27,12 +27,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 25000);
+
     const response = await fetch(`${TARGET}${path}`, {
       method: 'POST',
       headers: forwardHeaders,
       body: JSON.stringify(req.body),
       signal: controller.signal,
     });
+
     clearTimeout(timeout);
     const data = await response.json();
     return res.status(response.status).json(data);
